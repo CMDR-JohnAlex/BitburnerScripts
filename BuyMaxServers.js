@@ -2,6 +2,8 @@
 /*
 args:
 0: [int] Amount of RAM to buy
+
+RAM Usage: 4.25GB
 */
 export async function main(ns)
 {

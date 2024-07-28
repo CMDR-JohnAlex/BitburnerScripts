@@ -1,5 +1,9 @@
 /** @param {NS} ns */
 
+/*
+RAM Usage: 4.45GB
+*/
+
 const argsList = [
 	['spread-script', 'Preparer.js'], // 'NONE' if you don't want to spread a script
 	['spread-to-owned', false] // If you want to run the spread script on servers you already own

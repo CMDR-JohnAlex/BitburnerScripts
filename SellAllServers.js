@@ -1,4 +1,9 @@
 /** @param {NS} ns */
+
+/*
+RAM Usage: 4.40GB
+*/
+
 export async function main(ns)
 {
 	let i = 0;

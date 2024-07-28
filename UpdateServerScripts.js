@@ -3,6 +3,8 @@
 args:
 0: [string] Script to run
 1: [int] Threads to use
+
+RAM Usage: 4.05GB
 */
 export async function main(ns)
 {

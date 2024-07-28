@@ -2,6 +2,8 @@
 
 /* Our only job is to prepare a server for hacking by weakening and growing it
 before sending a message to the master server.
+
+RAM Usage: 2.35GB
 */
 export async function main(ns)
 {

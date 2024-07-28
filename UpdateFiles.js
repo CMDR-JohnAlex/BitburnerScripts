@@ -1,5 +1,9 @@
 /** @param {NS} ns */
 
+/*
+RAM Usage: 1.60GB
+*/
+
 export async function main(ns)
 {
 	// TODO: Re-write this all, make it fancy and dynamic.
