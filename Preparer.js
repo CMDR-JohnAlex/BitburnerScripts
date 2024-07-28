@@ -5,6 +5,7 @@ before sending a message to the master server.
 
 RAM Usage: 2.35GB
 */
+
 export async function main(ns)
 {
 	let ready = false;

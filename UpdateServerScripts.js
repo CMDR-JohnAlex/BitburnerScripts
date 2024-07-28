@@ -1,4 +1,5 @@
 /** @param {NS} ns */
+
 /*
 args:
 0: [string] Script to run
@@ -6,6 +7,7 @@ args:
 
 RAM Usage: 4.05GB
 */
+
 export async function main(ns)
 {
 	let i = 0;
