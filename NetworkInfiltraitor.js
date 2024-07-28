@@ -44,27 +44,38 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 		if (ns.getHackingLevel() > ns.getServerRequiredHackingLevel(node))
 		{
 			ns.print("Taking over " + node);
+			let portsOpened = 0;
 			if (ns.fileExists("BruteSSH.exe", "home"))
 			{
 				ns.brutessh(node);
+				portsOpened++;
 			}
 			if (ns.fileExists("FTPCrack.exe", "home"))
 			{
 				ns.ftpcrack(node);
+				portsOpened++;
 			}
 			if (ns.fileExists("relaySMTP.exe", "home"))
 			{
 				ns.relaysmtp(node);
+				portsOpened++;
 			}
 			if (ns.fileExists("HTTPWorm.exe", "home"))
 			{
 				ns.httpworm(node);
+				portsOpened++;
 			}
 			if (ns.fileExists("SQLInject.exe", "home"))
 			{
 				ns.sqlinject(node);
+				portsOpened++;
 			}
-			ns.nuke(node);
+
+			if (ns.getServerNumPortsRequired(node) <= portsOpened)
+			{
+				ns.nuke(node);
+				return; // Leave early and hope we come back to it
+			}
 
 			if (spreadScript != "NONE")
 			{

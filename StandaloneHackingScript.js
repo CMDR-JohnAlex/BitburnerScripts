@@ -1,5 +1,14 @@
 /** @param {NS} ns */
 
+/*
+args:
+[0] = Target hostname
+[1] = Percent money before hack (eg. 90 means grow until 90% of server's max money before hacking)
+[2] = Percent security before hack (eg. 10 means weaken until 10% of server's security)
+
+RAM Usage: 2.90GB
+*/
+
 const argsList = [
 	['target', 'n00dles'],
 	['money-percent', 95],
@@ -7,14 +16,6 @@ const argsList = [
 ];
 let options;
 
-/*
-args:
-[0] = Target hostname
-[1] = Percent money before hack (eg. 90 means grow until 90% of server's max money before hacking)
-[2] = Percent security before hack (eg. 10 means weaken until 10% of server's security)
-
-RAM Usage: 2.80GB
-*/
 export async function main(ns)
 {
 	options = ns.flags(argsList);
@@ -32,25 +33,31 @@ export async function main(ns)
 	const securityThreshold = LinearMapping(options['security-percent'], 100, ns.getServerMinSecurityLevel(options['target'])); // How can we get the max security of a server? Is there a max...
 
 	// Gain access to server
-	if (ns.fileExists("BruteSSH.exe", "home"))
+	while (ns.getServerNumPortsRequired(options['target']) > portsOpened)
 	{
-		ns.brutessh(options['target']);
-	}
-	if (ns.fileExists("FTPCrack.exe", "home"))
-	{
-		ns.ftpcrack(options['target']);
-	}
-	if (ns.fileExists("relaySMTP.exe", "home"))
-	{
-		ns.relaysmtp(options['target']);
-	}
-	if (ns.fileExists("HTTPWorm.exe", "home"))
-	{
-		ns.httpworm(options['target']);
-	}
-	if (ns.fileExists("SQLInject.exe", "home"))
-	{
-		ns.sqlinject(options['target']);
+		let portsOpened = 0;
+		if (ns.fileExists("BruteSSH.exe", "home"))
+		{
+			ns.brutessh(options['target']);
+		}
+		if (ns.fileExists("FTPCrack.exe", "home"))
+		{
+			ns.ftpcrack(options['target']);
+		}
+		if (ns.fileExists("relaySMTP.exe", "home"))
+		{
+			ns.relaysmtp(options['target']);
+		}
+		if (ns.fileExists("HTTPWorm.exe", "home"))
+		{
+			ns.httpworm(options['target']);
+		}
+		if (ns.fileExists("SQLInject.exe", "home"))
+		{
+			ns.sqlinject(options['target']);
+		}
+
+		await ns.sleep(200);
 	}
 
 	// I AM ROOT
