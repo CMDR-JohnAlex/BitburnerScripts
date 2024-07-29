@@ -14,11 +14,10 @@ const argsList = [
 	['money-percent', 95],
 	['security-percent', 5]
 ];
-let options;
 
 export async function main(ns)
 {
-	options = ns.flags(argsList);
+	const options = ns.flags(argsList);
 
 	if (options['target'] == 'home')
 	{
@@ -33,35 +32,38 @@ export async function main(ns)
 	const securityThreshold = LinearMapping(options['security-percent'], 100, ns.getServerMinSecurityLevel(options['target'])); // How can we get the max security of a server? Is there a max...
 
 	// Gain access to server
-	while (ns.getServerNumPortsRequired(options['target']) > portsOpened)
+	if (!ns.hasRootAccess(options['target']))
 	{
-		let portsOpened = 0;
-		if (ns.fileExists("BruteSSH.exe", "home"))
+		while (ns.getServerNumPortsRequired(options['target']) > portsOpened)
 		{
-			ns.brutessh(options['target']);
-		}
-		if (ns.fileExists("FTPCrack.exe", "home"))
-		{
-			ns.ftpcrack(options['target']);
-		}
-		if (ns.fileExists("relaySMTP.exe", "home"))
-		{
-			ns.relaysmtp(options['target']);
-		}
-		if (ns.fileExists("HTTPWorm.exe", "home"))
-		{
-			ns.httpworm(options['target']);
-		}
-		if (ns.fileExists("SQLInject.exe", "home"))
-		{
-			ns.sqlinject(options['target']);
+			let portsOpened = 0;
+			if (ns.fileExists("BruteSSH.exe", "home"))
+			{
+				ns.brutessh(options['target']);
+			}
+			if (ns.fileExists("FTPCrack.exe", "home"))
+			{
+				ns.ftpcrack(options['target']);
+			}
+			if (ns.fileExists("relaySMTP.exe", "home"))
+			{
+				ns.relaysmtp(options['target']);
+			}
+			if (ns.fileExists("HTTPWorm.exe", "home"))
+			{
+				ns.httpworm(options['target']);
+			}
+			if (ns.fileExists("SQLInject.exe", "home"))
+			{
+				ns.sqlinject(options['target']);
+			}
+
+			await ns.sleep(200);
 		}
 
-		await ns.sleep(200);
+		// I AM ROOT
+		ns.nuke(options['target']);
 	}
-
-	// I AM ROOT
-	ns.nuke(options['target']);
 
 	// Hack loop
 	while (true)

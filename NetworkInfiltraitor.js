@@ -11,7 +11,7 @@ const argsList = [
 let options;
 
 let pastNodes = [];
-let takenOverNodes = ["home", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
+let takenOverNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
 async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 {
 	if (ns.hasRootAccess(node))
@@ -99,7 +99,7 @@ export async function main(ns)
 
 	ns.tail();
 
-	var RootHost = ns.getHostname();
+	let RootHost = ns.getHostname();
 	ns.print("RootHost: " + RootHost);
 	ns.print("Spreading: " + options['spread-script']);
 	ns.print("Spread on already owned?: " + options['spread-to-owned']);
@@ -107,7 +107,7 @@ export async function main(ns)
 
 	while (true)
 	{
-		pastNodes = ["home", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
+		pastNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
 		await ns.sleep(200);
 		await RemoteWorm(ns, RootHost, options['spread-script'], options['spread-to-owned']);
 	}
