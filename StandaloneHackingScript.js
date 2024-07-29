@@ -2,22 +2,30 @@
 
 /*
 args:
-[0] = Target hostname
-[1] = Percent money before hack (eg. 90 means grow until 90% of server's max money before hacking)
-[2] = Percent security before hack (eg. 10 means weaken until 10% of server's security)
+[0] - Target hostname
+[1] - Percent money before hack (eg. 90 means grow until 90% of server's max money before hacking)
+[2] - Percent security before hack (eg. 10 means weaken until 10% of server's security)
 
 RAM Usage: 2.90GB
 */
 
-const argsList = [
-	['target', 'n00dles'],
-	['money-percent', 95],
-	['security-percent', 5]
-];
-
 export async function main(ns)
 {
-	const options = ns.flags(argsList);
+	let target = "n00dles";
+	let moneyPercent = 95;
+	let securityPercent = 5;
+	if (ns.args[0] != null)
+	{
+		target = ns.args[0];
+	}
+	if (ns.args[1] != null)
+	{
+		moneyPercent = ns.args[1];
+	}
+	if (ns.args[2] != null)
+	{
+		securityPercent = ns.args[2];
+	}
 
 	if (options['target'] == 'home')
 	{
@@ -28,57 +36,57 @@ export async function main(ns)
 	}
 
 	// Calculate thresholds
-	const moneyThreshold = LinearMapping(options['money-percent'], ns.getServerMaxMoney(options['target']), 0);
-	const securityThreshold = LinearMapping(options['security-percent'], 100, ns.getServerMinSecurityLevel(options['target'])); // How can we get the max security of a server? Is there a max...
+	const moneyThreshold = LinearMapping(moneyPercent, ns.getServerMaxMoney(target), 0);
+	const securityThreshold = LinearMapping(securityPercent, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
 
 	// Gain access to server
-	if (!ns.hasRootAccess(options['target']))
+	if (!ns.hasRootAccess(target))
 	{
-		while (ns.getServerNumPortsRequired(options['target']) > portsOpened)
+		while (ns.getServerNumPortsRequired(target) > portsOpened)
 		{
 			let portsOpened = 0;
 			if (ns.fileExists("BruteSSH.exe", "home"))
 			{
-				ns.brutessh(options['target']);
+				ns.brutessh(target);
 			}
 			if (ns.fileExists("FTPCrack.exe", "home"))
 			{
-				ns.ftpcrack(options['target']);
+				ns.ftpcrack(target);
 			}
 			if (ns.fileExists("relaySMTP.exe", "home"))
 			{
-				ns.relaysmtp(options['target']);
+				ns.relaysmtp(target);
 			}
 			if (ns.fileExists("HTTPWorm.exe", "home"))
 			{
-				ns.httpworm(options['target']);
+				ns.httpworm(target);
 			}
 			if (ns.fileExists("SQLInject.exe", "home"))
 			{
-				ns.sqlinject(options['target']);
+				ns.sqlinject(target);
 			}
 
 			await ns.sleep(200);
 		}
 
 		// I AM ROOT
-		ns.nuke(options['target']);
+		ns.nuke(target);
 	}
 
 	// Hack loop
 	while (true)
 	{
-		if (ns.getServerSecurityLevel(options['target']) > securityThreshold)
+		if (ns.getServerSecurityLevel(target) > securityThreshold)
 		{
-			await ns.weaken(options['target']);
+			await ns.weaken(target);
 		}
-		else if (ns.getServerMoneyAvailable(options['target']) < moneyThreshold)
+		else if (ns.getServerMoneyAvailable(target) < moneyThreshold)
 		{
-			await ns.grow(options['target']);
+			await ns.grow(target);
 		}
 		else
 		{
-			await ns.hack(options['target']);
+			await ns.hack(target);
 		}
 	}
 }

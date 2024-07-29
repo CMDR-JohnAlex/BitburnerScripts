@@ -1,14 +1,12 @@
 /** @param {NS} ns */
 
 /*
+args:
+[0] - Script filename to spread
+[1] - Boolean to spread to already owned servers
+
 RAM Usage: 4.45GB
 */
-
-const argsList = [
-	['spread-script', 'Preparer.js'], // 'NONE' if you don't want to spread a script
-	['spread-to-owned', false] // If you want to run the spread script on servers you already own
-];
-let options;
 
 let pastNodes = [];
 let takenOverNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
@@ -29,7 +27,7 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 		{
 			takenOverNodes.push(node);
 			ns.scp(spreadScript, node, "home");
-			ns.exec(spreadScript, node, 1);
+			ns.exec(spreadScript, node, 1, node);
 		}
 
 		for (let i = 0; i < children.length; i++)
@@ -84,7 +82,7 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 			if (spreadScript != "NONE")
 			{
 				ns.scp(spreadScript, node, "home");
-				ns.exec(spreadScript, node, 1);
+				ns.exec(spreadScript, node, 1, node);
 				await ns.sleep(200);
 			}
 
@@ -96,19 +94,28 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 export async function main(ns)
 {
 	options = ns.flags(argsList);
+	let spreadScript = "Preparer.js";
+	let spreadToOwned = false;
+	if (ns.args[0] != null)
+	{
+		spreadScript = ns.args[0];
+	}
+	if (ns.args[1] != null)
+	{
+		spreadToOwned = ns.args[1];
+	}
 
 	ns.tail();
 
 	let RootHost = ns.getHostname();
 	ns.print("RootHost: " + RootHost);
-	ns.print("Spreading: " + options['spread-script']);
-	ns.print("Spread on already owned?: " + options['spread-to-owned']);
-	await ns.sleep(5000);
+	ns.print("Spreading: " + spreadScript);
+	ns.print("Spread on already owned?: " + spreadToOwned);
 
 	while (true)
 	{
 		pastNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
 		await ns.sleep(200);
-		await RemoteWorm(ns, RootHost, options['spread-script'], options['spread-to-owned']);
+		await RemoteWorm(ns, RootHost, spreadScript, spreadToOwned);
 	}
 }
