@@ -93,7 +93,6 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 
 export async function main(ns)
 {
-	options = ns.flags(argsList);
 	let spreadScript = "Preparer.js";
 	let spreadToOwned = false;
 	if (ns.args[0] != null)

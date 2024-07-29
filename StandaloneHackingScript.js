@@ -6,7 +6,7 @@ args:
 [1] - Percent money before hack (eg. 90 means grow until 90% of server's max money before hacking)
 [2] - Percent security before hack (eg. 10 means weaken until 10% of server's security)
 
-RAM Usage: 2.90GB
+RAM Usage: 2.95GB
 */
 
 export async function main(ns)
@@ -27,7 +27,7 @@ export async function main(ns)
 		securityPercent = ns.args[2];
 	}
 
-	if (options['target'] == 'home')
+	if (target == 'home')
 	{
 		ns.tprint("Why are you trying to hack home?");
 		ns.print("Why are you trying to hack home?");

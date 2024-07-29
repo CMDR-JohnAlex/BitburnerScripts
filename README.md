@@ -10,6 +10,8 @@ TODO:
 - [X] Standalone script
 - [X] Remote Worm
 - [ ] Hacking Managers
+  - [ ] Single command scripts
+  - [ ] 
 - [ ] Batch Algorithms
 
 ## Current Scripts
