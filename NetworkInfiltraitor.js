@@ -8,6 +8,13 @@ args:
 RAM Usage: 4.45GB
 */
 
+/*
+These two lists are in the "module scope". The module scope is created when the
+game is loaded and is destroyed when the game is closed. This means that these
+variables will persist between script runs, meaning you can stop, edit, and
+restart this script and the variables will still exist. It will however, not
+persist between game loads.
+*/
 let pastNodes = [];
 let takenOverNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
 async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)

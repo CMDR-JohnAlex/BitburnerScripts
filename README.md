@@ -18,9 +18,12 @@ TODO:
 
 `StandaloneHackingScript.js` - My standalone hacking script, pretty basic and
 nice for early game. Includes modifiable threshold settings for easy tweaking.
+With a small tweak to `NetworkInfiltraitor.js` to make it run this script with
+as many threads as possible, this script can be nice.
 
 `RemoteWorm.js` - This script attempts to hack every server it can find and
-then spreads a script to those servers.
+then spreads a script to those servers. OLD (Surpassed by
+`NetworkInfiltraitor.js`)
 
 `NetworkInfiltraitor.js` - Another remote worm that will gain access to as
 many servers as it can and spread the `Preparer.js` script. (Configurable)
@@ -42,6 +45,9 @@ servers, and then sell the server.
 
 `UpdateServerScripts.js` - This script will kill all running scripts on bought
 servers, and then run some given script. Loops for all bought servers.
+
+`UpdateFiles.js` - Simply overwrites all files in the game with those
+currently on the github repository. WIP
 
 ### Idea
 
