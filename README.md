@@ -10,8 +10,16 @@ TODO:
 - [X] Standalone script
 - [X] Remote Worm
 - [ ] Hacking Managers
-  - [ ] Single command scripts
-  - [ ] 
+  - [X] Single command scripts
+    - [X] Hack
+    - [X] Grow
+    - [X] Weaken
+  - [-] Hack Manager
+    - [X] Record taken-over servers
+    - [X] Launch `NetworkInfiltraitor.js`
+    - [ ] Select best target
+    - [ ] Select best amount of hack/weak/grow threads
+    - [ ] Execute threads
 - [ ] Batch Algorithms
 
 ## Current Scripts
