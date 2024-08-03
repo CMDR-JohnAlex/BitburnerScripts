@@ -14,12 +14,12 @@ TODO:
     - [X] Hack
     - [X] Grow
     - [X] Weaken
-  - [-] Hack Manager
+  - [ ] Hack Manager
     - [X] Record taken-over servers
     - [X] Launch `NetworkInfiltraitor.js`
-    - [ ] Select best target
-    - [ ] Select best amount of hack/weak/grow threads
-    - [ ] Execute threads
+    - [X] Launch appropriate weaken/grow/hack script+threads
+    - [ ] Test and fix bugs
+    - [ ] Hack Manager improvements
 - [ ] Batch Algorithms
 
 ## Current Scripts
@@ -56,6 +56,8 @@ servers, and then run some given script. Loops for all bought servers.
 
 `UpdateFiles.js` - Simply overwrites all files in the game with those
 currently on the github repository. WIP
+
+`HackManager.js` - 
 
 ### Idea
 

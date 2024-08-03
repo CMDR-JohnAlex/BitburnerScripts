@@ -28,9 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GroupScripts", "GroupScript
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SingleCommands", "SingleCommands", "{33E3A7F1-A49E-4C6F-BF4F-49CB7AA70CE1}"
 	ProjectSection(SolutionItems) = preProject
+		Grow.js = Grow.js
+		Hack.js = Hack.js
 		LoopGrow.js = LoopGrow.js
 		LoopHack.js = LoopHack.js
 		LoopWeaken.js = LoopWeaken.js
+		Weaken.js = Weaken.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HackManager", "HackManager", "{021D3A40-3123-4757-81E6-42F157A3DD6F}"
