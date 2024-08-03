@@ -6,6 +6,7 @@ RAM Usage: ?.??GB
 
 let preparedServers = {};
 let index = 0;
+let targets = []; // Update this manually for now. Populate with the hostnames of the servers you want the dedicated servers to hack.
 
 async function UpdatePort(ns, port)
 {
@@ -69,6 +70,39 @@ async function UpdateServer(ns, server)
 	}
 }
 
+async function UpdateDedicatedServer(ns, server, target)
+{
+	// TODO: We should NOT be calculating this every loop-
+	// Calculate thresholds
+	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
+	let securityAmount = 0.05; // TODO: args. Value is same for all servers
+	const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(target), 0);
+	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
+
+	// If our scripts are currently running on the server, skip
+	if (ns.scriptRunning("Weaken.js", server) || ns.scriptRunning("Grow.js", server) || ns.scriptRunning("Hack.js", server))
+	{
+		return;
+	}
+
+	if (ns.getServerSecurityLevel(target) > securityThreshold)
+	{
+		let threads = getMaxThreads(ns, server, "Weaken.js");
+		ns.exec("Weaken.js", server, threads, target);
+	}
+	else if (ns.getServerMoneyAvailable(target) < moneyThreshold)
+	{
+		let threads = getMaxThreads(ns, server, "Grow.js");
+		ns.exec("Grow.js", server, threads, target);
+	}
+	else
+	{
+		// We don't want to hack the target to nothing...
+		let threads = getMaxThreads(ns, server, "Hack.js");
+		ns.exec("Hack.js", server, threads, target);
+	}
+}
+
 function getMaxThreads(ns, server, scriptName)
 {
 	return Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam(scriptName)); // ns.getServerRam() is deprecated?
@@ -88,6 +122,8 @@ function LinearMapping(value, minimum, maximum)
 
 export async function main(ns)
 {
+	ns.tail();
+
 	// Load current prepared servers from file
 	preparedServers = ns.read("PreparedServers.txt").split('\n');
 
@@ -95,9 +131,19 @@ export async function main(ns)
 	{
 		preparedServers = {};
 	}
+	else if (preparedServers[preparedServers.length - 1] === "")
+	{
+		preparedServers.pop();
+	}
 
 	// Do more prep work here
 	// ...
+
+	let dedicatedServers = ns.getPurchasedServers();
+	for (let i = 0; i < dedicatedServers.length; i++)
+	{
+		await PrepareServer(ns, dedicatedServers[i]);
+	}
 
 	// Launch NetworkInfiltraitor.js
 	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", true, false);
@@ -114,6 +160,11 @@ export async function main(ns)
 		for (let i = 0; i < preparedServers.length; i++)
 		{
 			await UpdateServer(ns, preparedServers[i]);
+		}
+
+		for (let i = 0; (i < dedicatedServers.length) && (targets.length > 0); i++)
+		{
+			await UpdateDedicatedServer(ns, dedicatedServers[i], targets[i % targets.length]);
 		}
 
 		await ns.sleep(200);

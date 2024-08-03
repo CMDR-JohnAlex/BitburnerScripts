@@ -14,11 +14,12 @@ TODO:
     - [X] Hack
     - [X] Grow
     - [X] Weaken
-  - [ ] Hack Manager
+  - [X] Hack Manager
     - [X] Record taken-over servers
     - [X] Launch `NetworkInfiltraitor.js`
     - [X] Launch appropriate weaken/grow/hack script+threads
-    - [ ] Test and fix bugs
+    - [X] Test and fix bugs
+    - [X] Use dedicated servers
     - [ ] Hack Manager improvements
 - [ ] Batch Algorithms
 
