@@ -3,7 +3,8 @@
 /*
 args:
 [0] - Script filename to spread
-[1] - Boolean to spread to already owned servers
+[1] - Use as many threads as possible?
+[2] - Boolean to spread to already owned servers
 
 RAM Usage: 4.45GB
 */
@@ -34,7 +35,12 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 		{
 			takenOverNodes.push(node);
 			ns.scp(spreadScript, node, "home");
-			ns.exec(spreadScript, node, 1, node);
+			let threads = 1;
+			if (useMaxThreads)
+			{
+				threads = getMaxThreads(ns, node, spreadScript);
+			}
+			ns.exec(spreadScript, node, threads, node);
 		}
 
 		for (let i = 0; i < children.length; i++)
@@ -89,7 +95,12 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 			if (spreadScript != "NONE")
 			{
 				ns.scp(spreadScript, node, "home");
-				ns.exec(spreadScript, node, 1, node);
+				let threads = 1;
+				if (useMaxThreads)
+				{
+					threads = getMaxThreads(ns, node, spreadScript);
+				}
+				ns.exec(spreadScript, node, threads, node);
 				await ns.sleep(200);
 			}
 
@@ -98,9 +109,15 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll)
 	}
 }
 
+function getMaxThreads(ns, server, scriptName)
+{
+	return Math.floor((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam(scriptName));
+}
+
 export async function main(ns)
 {
 	let spreadScript = "Preparer.js";
+	let useMaxThreads = false;
 	let spreadToOwned = false;
 	if (ns.args[0] != null)
 	{
@@ -108,7 +125,11 @@ export async function main(ns)
 	}
 	if (ns.args[1] != null)
 	{
-		spreadToOwned = ns.args[1];
+		useMaxThreads = ns.args[1];
+	}
+	if (ns.args[2] != null)
+	{
+		spreadToOwned = ns.args[2];
 	}
 
 	ns.tail();

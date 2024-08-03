@@ -100,7 +100,7 @@ export async function main(ns)
 	// ...
 
 	// Launch NetworkInfiltraitor.js
-	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", false);
+	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", true, false);
 
 	while (true)
 	{
