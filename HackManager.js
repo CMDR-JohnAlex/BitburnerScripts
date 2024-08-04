@@ -27,14 +27,14 @@ async function PrepareServer(ns, server)
 {
 	// Kill active scripts
 	//ns.killall(server); // We might want to keep non-hack manager scripts running
-	ns.scriptKill("Weaken.js", server);
-	ns.scriptKill("Grow.js", server);
-	ns.scriptKill("Hack.js", server);
+	ns.scriptKill("SingleWeaken.js", server);
+	ns.scriptKill("SingleGrow.js", server);
+	ns.scriptKill("SingleHack.js", server);
 
 	// Copy necessary scripts to server
-	ns.scp("Weaken.js", server);
-	ns.scp("Grow.js", server);
-	ns.scp("Hack.js", server);
+	ns.scp("SingleWeaken.js", server);
+	ns.scp("SingleGrow.js", server);
+	ns.scp("SingleHack.js", server);
 }
 
 async function UpdateServer(ns, server)
@@ -47,26 +47,26 @@ async function UpdateServer(ns, server)
 	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(server)); // How can we get the max security of a server? Is there a max...
 
 	// If our scripts are currently running on the server, skip
-	if (ns.scriptRunning("Weaken.js", server) || ns.scriptRunning("Grow.js", server) || ns.scriptRunning("Hack.js", server))
+	if (ns.scriptRunning("SingleWeaken.js", server) || ns.scriptRunning("SingleGrow.js", server) || ns.scriptRunning("SingleHack.js", server))
 	{
 		return;
 	}
 
 	if (ns.getServerSecurityLevel(server) > securityThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "Weaken.js");
-		ns.exec("Weaken.js", server, threads, server);
+		let threads = getMaxThreads(ns, server, "SingleWeaken.js");
+		ns.exec("SingleWeaken.js", server, threads, server);
 	}
 	else if (ns.getServerMoneyAvailable(server) < moneyThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "Grow.js");
-		ns.exec("Grow.js", server, threads, server);
+		let threads = getMaxThreads(ns, server, "SingleGrow.js");
+		ns.exec("SingleGrow.js", server, threads, server);
 	}
 	else
 	{
 		// We don't want to hack the server to nothing...
-		let threads = getMaxThreads(ns, server, "Hack.js");
-		ns.exec("Hack.js", server, threads, server);
+		let threads = getMaxThreads(ns, server, "SingleHack.js");
+		ns.exec("SingleHack.js", server, threads, server);
 	}
 }
 
@@ -80,26 +80,26 @@ async function UpdateDedicatedServer(ns, server, target)
 	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
 
 	// If our scripts are currently running on the server, skip
-	if (ns.scriptRunning("Weaken.js", server) || ns.scriptRunning("Grow.js", server) || ns.scriptRunning("Hack.js", server))
+	if (ns.scriptRunning("SingleWeaken.js", server) || ns.scriptRunning("SingleGrow.js", server) || ns.scriptRunning("SingleHack.js", server))
 	{
 		return;
 	}
 
 	if (ns.getServerSecurityLevel(target) > securityThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "Weaken.js");
-		ns.exec("Weaken.js", server, threads, target);
+		let threads = getMaxThreads(ns, server, "SingleWeaken.js");
+		ns.exec("SingleWeaken.js", server, threads, target);
 	}
 	else if (ns.getServerMoneyAvailable(target) < moneyThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "Grow.js");
-		ns.exec("Grow.js", server, threads, target);
+		let threads = getMaxThreads(ns, server, "SingleGrow.js");
+		ns.exec("SingleGrow.js", server, threads, target);
 	}
 	else
 	{
 		// We don't want to hack the target to nothing...
-		let threads = getMaxThreads(ns, server, "Hack.js");
-		ns.exec("Hack.js", server, threads, target);
+		let threads = getMaxThreads(ns, server, "SingleHack.js");
+		ns.exec("SingleHack.js", server, threads, target);
 	}
 }
 
@@ -146,7 +146,7 @@ export async function main(ns)
 	}
 
 	// Launch NetworkInfiltraitor.js
-	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", true, false);
+	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", true, false, true);
 
 	while (true)
 	{
@@ -175,5 +175,12 @@ export async function main(ns)
 TODO:
 Perhaps the Hack.js, Weaken.js, and Grow.js scripts can return a value when
 they are done and then the server can run new scripts on them instead of
-constantly checking and wasting time and CPU resources.
+constantly checking and wasting time and CPU cycles/resources.
+
+Also, instead of checking if there is a script running on the server, we should
+check if there is free RAM to use. However, if we are only going off of
+callbacks once things get started, we should instead do some logic so that we
+don't use max threads for hacking, and then we can use the remaining threads to
+weaken and grow the server. The only issue with that is we would become out of
+sync when two scripts are reporting complete when they are not fully...
 */

@@ -20,6 +20,7 @@ TODO:
     - [X] Launch appropriate weaken/grow/hack script+threads
     - [X] Test and fix bugs
     - [X] Use dedicated servers
+  - [ ] Hack Manager 2.0
     - [ ] Hack Manager improvements
 - [ ] Batch Algorithms
 
