@@ -19,7 +19,7 @@ persist between game loads.
 */
 let pastNodes = [];
 let takenOverNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
-async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll, spreadScriptArgument)
+async function RemoteWorm(ns, node, spreadScript, useMaxThreads, shouldSpreadToAll, spreadScriptArgument)
 {
 	if (ns.hasRootAccess(node))
 	{
@@ -41,7 +41,8 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll, spreadScrip
 			{
 				threads = getMaxThreads(ns, node, spreadScript);
 			}
-			ns.exec(spreadScript, node, threads, node, spreadScriptArgument);
+			if (threads !== 0)
+				ns.exec(spreadScript, node, threads, node, spreadScriptArgument);
 		}
 
 		for (let i = 0; i < children.length; i++)
@@ -51,7 +52,7 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll, spreadScrip
 				ns.print("Found a new node: " + children[i]);
 				await ns.sleep(1000);
 
-				await RemoteWorm(ns, children[i], spreadScript, shouldSpreadToAll, spreadScriptArgument);
+				await RemoteWorm(ns, children[i], spreadScript, useMaxThreads, shouldSpreadToAll, spreadScriptArgument);
 			}
 		}
 	}
@@ -87,11 +88,12 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll, spreadScrip
 				portsOpened++;
 			}
 
-			if (ns.getServerNumPortsRequired(node) <= portsOpened)
+			if (ns.getServerNumPortsRequired(node) > portsOpened)
 			{
-				ns.nuke(node);
 				return; // Leave early and hope we come back to it
 			}
+
+			ns.nuke(node);
 
 			if (spreadScript != "NONE")
 			{
@@ -101,7 +103,8 @@ async function RemoteWorm(ns, node, spreadScript, shouldSpreadToAll, spreadScrip
 				{
 					threads = getMaxThreads(ns, node, spreadScript);
 				}
-				ns.exec(spreadScript, node, threads, node, spreadScriptArgument);
+				if (threads != 0)
+					ns.exec(spreadScript, node, threads, node, spreadScriptArgument);
 				await ns.sleep(200);
 			}
 
@@ -150,6 +153,6 @@ export async function main(ns)
 	{
 		pastNodes = ["home", "darkweb", "pserv-0", "pserv-1", "pserv-2", "pserv-3", "pserv-4", "pserv-5", "pserv-6", "pserv-7", "pserv-8", "pserv-9", "pserv-10", "pserv-11", "pserv-12", "pserv-13", "pserv-14", "pserv-15", "pserv-16", "pserv-17", "pserv-18", "pserv-19", "pserv-20", "pserv-21", "pserv-22", "pserv-23", "pserv-24", "pserv-25"];
 		await ns.sleep(200);
-		await RemoteWorm(ns, RootHost, spreadScript, spreadToOwned, spreadScriptArgument);
+		await RemoteWorm(ns, RootHost, spreadScript, useMaxThreads, spreadToOwned, spreadScriptArgument);
 	}
 }

@@ -39,6 +39,7 @@ export async function main(ns)
 			}
 		}
 	}
+
 	// Send message to master server
 	let message = [];
 	message.hostname = ns.getHostname();
