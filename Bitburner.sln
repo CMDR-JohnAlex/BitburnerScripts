@@ -12,13 +12,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SingleCommands", "SingleCommands", "{33E3A7F1-A49E-4C6F-BF4F-49CB7AA70CE1}"
 	ProjectSection(SolutionItems) = preProject
 		GrowAndReply.js = GrowAndReply.js
-		LoopGrow.js = LoopGrow.js
 		HackAndReply.js = HackAndReply.js
+		LoopGrow.js = LoopGrow.js
 		LoopHack.js = LoopHack.js
 		LoopWeaken.js = LoopWeaken.js
 		SingleGrow.js = SingleGrow.js
-		SingleWeaken.js = SingleWeaken.js
 		SingleHack.js = SingleHack.js
+		SingleWeaken.js = SingleWeaken.js
 		WeakenAndReply.js = WeakenAndReply.js
 	EndProjectSection
 EndProject
@@ -46,9 +46,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StandaloneHackingScript", "
 		StandaloneHackingScript.js = StandaloneHackingScript.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HackManager2.0", "HackManager2.0", "{DEF11424-F7F5-4503-8EA5-630FFB88D0AB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IPvGO", "IPvGO", "{F3FCBAEA-C297-4377-9E2D-F2038A3ED8F8}"
 	ProjectSection(SolutionItems) = preProject
-		HackManager2.0.js = HackManager2.0.js
+		IPvGO1.0.js = IPvGO1.0.js
 	EndProjectSection
 EndProject
 Global
@@ -61,7 +61,7 @@ Global
 		{6E14F1CF-65C2-468F-B741-F76697F0FEB6} = {32CAF04C-5FFF-4B34-A8C0-C4F0BDB82872}
 		{E59F8E99-3203-48D1-B801-090874CE007A} = {32CAF04C-5FFF-4B34-A8C0-C4F0BDB82872}
 		{6B05082B-BD6B-4577-AF35-17D9E1125487} = {E59F8E99-3203-48D1-B801-090874CE007A}
-		{DEF11424-F7F5-4503-8EA5-630FFB88D0AB} = {E59F8E99-3203-48D1-B801-090874CE007A}
+		{F3FCBAEA-C297-4377-9E2D-F2038A3ED8F8} = {32CAF04C-5FFF-4B34-A8C0-C4F0BDB82872}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A061C8A9-9518-4132-9EC0-4AFD72487224}

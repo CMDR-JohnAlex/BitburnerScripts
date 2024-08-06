@@ -20,11 +20,11 @@ TODO:
     - [X] Launch appropriate weaken/grow/hack script+threads
     - [X] Test and fix bugs
     - [X] Use dedicated servers
-  - [ ] Hack Manager 2.0
-    - [ ] Hack Manager improvements
 - [ ] Batch Algorithms
+- [ ] Update README.md
+- [ ] IPvGO 1.0
 
-## Current Scripts
+## Current Scripts (NEEDS UPDATING)
 
 `StandaloneHackingScript.js` - My standalone hacking script, pretty basic and
 nice for early game. Includes modifiable threshold settings for easy tweaking.
