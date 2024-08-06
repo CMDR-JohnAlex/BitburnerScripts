@@ -36,8 +36,8 @@ export async function main(ns)
 	}
 
 	// Calculate thresholds
-	const moneyThreshold = LinearMapping(moneyPercent, ns.getServerMaxMoney(target), 0);
-	const securityThreshold = LinearMapping(securityPercent, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
+	const moneyThreshold = LinearMapping(moneyPercent, 0, ns.getServerMaxMoney(target));
+	const securityThreshold = LinearMapping(securityPercent, ns.getServerMinSecurityLevel(target), 100); // How can we get the max security of a server? Is there a max...
 
 	// Gain access to server
 	if (!ns.hasRootAccess(target))

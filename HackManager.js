@@ -43,8 +43,8 @@ async function UpdateServer(ns, server)
 	// Calculate thresholds
 	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
 	let securityAmount = 0.05; // TODO: args. Value is same for all servers
-	const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(server), 0);
-	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(server)); // How can we get the max security of a server? Is there a max...
+	const moneyThreshold = LinearMapping(moneyPercent, 0, ns.getServerMaxMoney(target));
+	const securityThreshold = LinearMapping(securityPercent, ns.getServerMinSecurityLevel(target), 100); // How can we get the max security of a server? Is there a max...
 
 	// If our scripts are currently running on the server, skip
 	if (ns.scriptRunning("SingleWeaken.js", server) || ns.scriptRunning("SingleGrow.js", server) || ns.scriptRunning("SingleHack.js", server))
@@ -81,8 +81,8 @@ async function UpdateDedicatedServer(ns, server, target)
 	let threads = 64; // TODO: args. Allow user to set how many threads will be used each time. If the servers have a lot of ram, set this higher or else game will slow down and crash.
 	while (threads < (ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam("SingleWeaken.js"))
 	{
-		const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(targets[dedicatedServerIterator % targets.length]), 0);
-		const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(targets[dedicatedServerIterator % targets.length])); // How can we get the max security of a server? Is there a max...
+		const moneyThreshold = LinearMapping(moneyAmount, 0, ns.getServerMaxMoney(targets[dedicatedServerIterator % targets.length]));
+		const securityThreshold = LinearMapping(securityAmount, ns.getServerMinSecurityLevel(targets[dedicatedServerIterator % targets.length]), 100); // How can we get the max security of a server? Is there a max...
 		if (ns.getServerSecurityLevel(targets[dedicatedServerIterator % targets.length]) > securityThreshold)
 		{
 			ns.exec("SingleWeaken.js", server, threads, targets[dedicatedServerIterator % targets.length]);
@@ -108,8 +108,8 @@ async function UpdateHome(ns, target)
 	// Calculate thresholds
 	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
 	let securityAmount = 0.05; // TODO: args. Value is same for all servers
-	const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(target), 0);
-	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
+	const moneyThreshold = LinearMapping(moneyAmount, 0, ns.getServerMaxMoney(target));
+	const securityThreshold = LinearMapping(securityAmount, ns.getServerMinSecurityLevel(target), 100); // How can we get the max security of a server? Is there a max...
 
 	let threads = 100; // TODO: args. Allow user to set how many threads will be used each time. If the home computer have a lot of ram, set this higher or else game will slow down and crash.
 	let threadsToSave = 64; // TODO: args. Save at least this many threads for the home computer to use.
