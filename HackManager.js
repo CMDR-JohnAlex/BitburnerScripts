@@ -70,7 +70,39 @@ async function UpdateServer(ns, server)
 	}
 }
 
+let dedicatedServerIterator = 0;
 async function UpdateDedicatedServer(ns, server, target)
+{
+	// TODO: We should NOT be calculating this every loop-
+	// Calculate thresholds
+	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
+	let securityAmount = 0.05; // TODO: args. Value is same for all servers
+
+	let threads = 64; // TODO: args. Allow user to set how many threads will be used each time. If the servers have a lot of ram, set this higher or else game will slow down and crash.
+	while (threads < (ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam("SingleWeaken.js"))
+	{
+		const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(targets[dedicatedServerIterator % targets.length]), 0);
+		const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(targets[dedicatedServerIterator % targets.length])); // How can we get the max security of a server? Is there a max...
+		if (ns.getServerSecurityLevel(targets[dedicatedServerIterator % targets.length]) > securityThreshold)
+		{
+			ns.exec("SingleWeaken.js", server, threads, targets[dedicatedServerIterator % targets.length]);
+		}
+		else if (ns.getServerMoneyAvailable(targets[dedicatedServerIterator % targets.length]) < moneyThreshold)
+		{
+			ns.exec("SingleGrow.js", server, threads, targets[dedicatedServerIterator % targets.length]);
+		}
+		else
+		{
+			ns.exec("SingleHack.js", server, threads, targets[dedicatedServerIterator % targets.length]);
+		}
+		dedicatedServerIterator++;
+	}
+
+	if (dedicatedServerIterator > 1000)
+		dedicatedServerIterator = 0; // Just to be safe... This number will get high FAST!
+}
+
+async function UpdateHome(ns, target)
 {
 	// TODO: We should NOT be calculating this every loop-
 	// Calculate thresholds
@@ -79,27 +111,22 @@ async function UpdateDedicatedServer(ns, server, target)
 	const moneyThreshold = LinearMapping(moneyAmount, ns.getServerMaxMoney(target), 0);
 	const securityThreshold = LinearMapping(securityAmount, 100, ns.getServerMinSecurityLevel(target)); // How can we get the max security of a server? Is there a max...
 
-	// If our scripts are currently running on the server, skip
-	if (ns.scriptRunning("SingleWeaken.js", server) || ns.scriptRunning("SingleGrow.js", server) || ns.scriptRunning("SingleHack.js", server))
-	{
-		return;
-	}
-
+	let threads = 100; // TODO: args. Allow user to set how many threads will be used each time. If the home computer have a lot of ram, set this higher or else game will slow down and crash.
+	let threadsToSave = 64; // TODO: args. Save at least this many threads for the home computer to use.
 	if (ns.getServerSecurityLevel(target) > securityThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "SingleWeaken.js");
-		ns.exec("SingleWeaken.js", server, threads, target);
+		if (threads < Math.floor((ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - threadsToSave)) / ns.getScriptRam("SingleWeaken.js"))
+			ns.run("SingleWeaken.js", threads, target);
 	}
 	else if (ns.getServerMoneyAvailable(target) < moneyThreshold)
 	{
-		let threads = getMaxThreads(ns, server, "SingleGrow.js");
-		ns.exec("SingleGrow.js", server, threads, target);
+		if (threads < Math.floor((ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - threadsToSave)) / ns.getScriptRam("SingleGrow.js"))
+			ns.run("SingleGrow.js", threads, target);
 	}
 	else
 	{
-		// We don't want to hack the target to nothing...
-		let threads = getMaxThreads(ns, server, "SingleHack.js");
-		ns.exec("SingleHack.js", server, threads, target);
+		if (threads < Math.floor((ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - threadsToSave)) / ns.getScriptRam("SingleHack.js"))
+			ns.run("SingleHack.js", threads, target);
 	}
 }
 
@@ -148,6 +175,7 @@ export async function main(ns)
 	// Launch NetworkInfiltraitor.js
 	ns.run("NetworkInfiltraitor.js", 1, "Preparer.js", true, false, true);
 
+	let iterator = 0;
 	while (true)
 	{
 		await UpdatePort(ns, 1);
@@ -164,8 +192,13 @@ export async function main(ns)
 
 		for (let i = 0; (i < dedicatedServers.length) && (targets.length > 0); i++)
 		{
-			await UpdateDedicatedServer(ns, dedicatedServers[i], targets[i % targets.length]);
+			await UpdateDedicatedServer(ns, dedicatedServers[i], targets);
 		}
+
+		await UpdateHome(ns, targets[iterator % targets.length]);
+		iterator++; // How big can this get...
+		if (iterator > 1000)
+			iterator = 0; // Let's just do this to be safe
 
 		await ns.sleep(200);
 	}
