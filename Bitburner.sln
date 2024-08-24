@@ -32,7 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{6E14F1CF
 		BuyMaxServers.js = BuyMaxServers.js
 		SellAllServers.js = SellAllServers.js
 		UpdateFiles.js = UpdateFiles.js
-		UpdateServerScripts.js = UpdateServerScripts.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HackingScripts", "HackingScripts", "{E59F8E99-3203-48D1-B801-090874CE007A}"

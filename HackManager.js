@@ -67,11 +67,12 @@ async function UpdateTargets(ns)
 		const hackLevel = ns.getServerRequiredHackingLevel(serv);
 		const RAMAmount = ns.getServerMaxRam(serv);
 		const hasRoot = ns.hasRootAccess(serv);
-		ns.tprint(serv, " ", "(lvl:", hackLevel, ")", " ", "(", "$", ns.formatNumber(moneyAmount), ") (", RAMAmount, "GB RAM", ")", " Root: ", hasRoot);
+		ns.print(serv, " ", "(lvl:", hackLevel, ")", " ", "(", "$", ns.formatNumber(moneyAmount), ") (", RAMAmount, "GB RAM", ")", " Root: ", hasRoot);
 
 		if (moneyAmount > 0 && hackLevel >= 0 && RAMAmount > 0)
 			targets.unshift(serv);
 	}
+	ns.print(targets);
 }
 
 async function UpdateServer(ns, server)
