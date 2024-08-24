@@ -18,6 +18,8 @@ async function UpdatePort(ns, port)
 			ns.print("Saving " + data.hostname + " to PreparedServers.txt");
 			ns.write("PreparedServers.txt", data.hostname + '\n', 'a');
 			preparedServers.push(data.hostname);
+
+			await UpdateTargets(ns); // New server added, so update the targets list
 		}
 	}
 	// If the data isn't what we want and not NULL PORT DATA, then discard it
@@ -37,14 +39,49 @@ async function PrepareServer(ns, server)
 	ns.scp("SingleHack.js", server);
 }
 
+async function UpdateTargets(ns)
+{
+	let possibleTargets = ns.read("PreparedServers.txt").split('\n');
+	if (possibleTargets[0] === "")
+	{
+		return; // Just end. No prepared servers to become targets.
+		//possibleTargets = [];
+	}
+	else if (possibleTargets[possibleTargets.length - 1] === "")
+	{
+		possibleTargets.pop();
+	}
+	targets = [];
+
+	const sortedServers = possibleTargets.sort((a, b) =>
+	{
+		const requiredHackingA = ns.getServerRequiredHackingLevel(a)
+		const requiredHackingB = ns.getServerRequiredHackingLevel(b)
+		return requiredHackingA - requiredHackingB
+	})
+	for (let i = 0; i < possibleTargets.length; i++)
+	{
+		const serv = sortedServers[i];
+
+		const moneyAmount = ns.getServerMaxMoney(serv);
+		const hackLevel = ns.getServerRequiredHackingLevel(serv);
+		const RAMAmount = ns.getServerMaxRam(serv);
+		const hasRoot = ns.hasRootAccess(serv);
+		ns.tprint(serv, " ", "(lvl:", hackLevel, ")", " ", "(", "$", ns.formatNumber(moneyAmount), ") (", RAMAmount, "GB RAM", ")", " Root: ", hasRoot);
+
+		if (moneyAmount > 0 && hackLevel >= 0 && RAMAmount > 0)
+			targets.unshift(serv);
+	}
+}
+
 async function UpdateServer(ns, server)
 {
 	// TODO: We should NOT be calculating this every loop-
 	// Calculate thresholds
 	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
 	let securityAmount = 0.05; // TODO: args. Value is same for all servers
-	const moneyThreshold = LinearMapping(moneyPercent, 0, ns.getServerMaxMoney(target));
-	const securityThreshold = LinearMapping(securityPercent, ns.getServerMinSecurityLevel(target), 100); // How can we get the max security of a server? Is there a max...
+	const moneyThreshold = LinearMapping(moneyAmount, 0, ns.getServerMaxMoney(server));
+	const securityThreshold = LinearMapping(securityAmount, ns.getServerMinSecurityLevel(server), 100); // How can we get the max security of a server? Is there a max...
 
 	// If our scripts are currently running on the server, skip
 	if (ns.scriptRunning("SingleWeaken.js", server) || ns.scriptRunning("SingleGrow.js", server) || ns.scriptRunning("SingleHack.js", server))
@@ -71,14 +108,14 @@ async function UpdateServer(ns, server)
 }
 
 let dedicatedServerIterator = 0;
-async function UpdateDedicatedServer(ns, server, target)
+async function UpdateDedicatedServer(ns, server)
 {
 	// TODO: We should NOT be calculating this every loop-
 	// Calculate thresholds
 	let moneyAmount = 0.90; // TODO: args. Value is same for all servers
 	let securityAmount = 0.05; // TODO: args. Value is same for all servers
 
-	let threads = 64; // TODO: args. Allow user to set how many threads will be used each time. If the servers have a lot of ram, set this higher or else game will slow down and crash.
+	let threads = 1024; // TODO: args. Allow user to set how many threads will be used each time. If the servers have a lot of ram, set this higher or else game will slow down and crash.
 	while (threads < (ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam("SingleWeaken.js"))
 	{
 		const moneyThreshold = LinearMapping(moneyAmount, 0, ns.getServerMaxMoney(targets[dedicatedServerIterator % targets.length]));
@@ -98,7 +135,7 @@ async function UpdateDedicatedServer(ns, server, target)
 		dedicatedServerIterator++;
 	}
 
-	if (dedicatedServerIterator > 1000)
+	if (dedicatedServerIterator > 1000000)
 		dedicatedServerIterator = 0; // Just to be safe... This number will get high FAST!
 }
 
@@ -111,8 +148,8 @@ async function UpdateHome(ns, target)
 	const moneyThreshold = LinearMapping(moneyAmount, 0, ns.getServerMaxMoney(target));
 	const securityThreshold = LinearMapping(securityAmount, ns.getServerMinSecurityLevel(target), 100); // How can we get the max security of a server? Is there a max...
 
-	let threads = 100; // TODO: args. Allow user to set how many threads will be used each time. If the home computer have a lot of ram, set this higher or else game will slow down and crash.
-	let threadsToSave = 64; // TODO: args. Save at least this many threads for the home computer to use.
+	let threads = 32768; // TODO: args. Allow user to set how many threads will be used each time. If the home computer have a lot of ram, set this higher or else game will slow down and crash.
+	let threadsToSave = 256; // TODO: args. Save at least this many threads for the home computer to use.
 	if (ns.getServerSecurityLevel(target) > securityThreshold)
 	{
 		if (threads < Math.floor((ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - threadsToSave)) / ns.getScriptRam("SingleWeaken.js"))
@@ -162,9 +199,7 @@ export async function main(ns)
 	{
 		preparedServers.pop();
 	}
-
-	// Do more prep work here
-	// ...
+	await UpdateTargets(ns);
 
 	let dedicatedServers = ns.getPurchasedServers();
 	for (let i = 0; i < dedicatedServers.length; i++)
@@ -197,7 +232,7 @@ export async function main(ns)
 
 		await UpdateHome(ns, targets[iterator % targets.length]);
 		iterator++; // How big can this get...
-		if (iterator > 1000)
+		if (iterator > 1000000)
 			iterator = 0; // Let's just do this to be safe
 
 		await ns.sleep(200);
